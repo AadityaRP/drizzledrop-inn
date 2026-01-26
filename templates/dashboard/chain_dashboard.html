@@ -1,0 +1,35 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Chain Dashboard{% endblock %}
+{% block page_title %}Chain Owner Dashboard{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card card-quiet h-100 p-3">
+            <div class="text-muted small">Hotels in chain</div>
+            <div class="display-6 fw-bold">{{ accessible_hotels|length }}</div>
+            <p class="mb-0 text-secondary">Manage all hotels and users from the sidebar.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-quiet h-100 p-3">
+            <div class="text-muted small">Active session hotel</div>
+            <div class="fw-semibold fs-5">
+                {% if current_hotel %}{{ current_hotel.name }}{% else %}Not selected{% endif %}
+            </div>
+            <p class="mb-0 text-secondary">Use the top-right selector to switch context.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-quiet h-100 p-3">
+            <div class="text-muted small">Next steps</div>
+            <ul class="mb-0 ps-3">
+                <li>Onboard hotels and room categories.</li>
+                <li>Assign hotel admins and staff users.</li>
+                <li>Track bookings and invoices once live.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Hotel Dashboard{% endblock %}
+{% block page_title %}Hotel Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card card-quiet h-100 p-3">
+            <div class="text-muted small">Current hotel</div>
+            <div class="fs-4 fw-semibold">
+                {% if current_hotel %}{{ current_hotel.name }}{% else %}No hotel selected{% endif %}
+            </div>
+            <p class="mb-2 text-secondary">Switch hotels from the selector in the top bar if you manage multiple properties.</p>
+            <span class="badge text-bg-light text-secondary">Hotel scoped</span>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-quiet h-100 p-3">
+            <div class="text-muted small">Getting started</div>
+            <ul class="mb-0 ps-3">
+                <li>Review today’s arrivals and departures.</li>
+                <li>Create or update bookings and invoices.</li>
+                <li>Check room and enquiry lists from the sidebar.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

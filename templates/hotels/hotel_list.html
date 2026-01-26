@@ -1,0 +1,61 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Hotels | Drizzle Drop Inn{% endblock %}
+{% block page_title %}Hotels{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h5 class="mb-1">Chain Hotels</h5>
+        <p class="text-muted mb-0">Manage the properties that belong to the chain.</p>
+    </div>
+    {% if is_chain_owner %}
+        <a href="{% url 'hotels:hotel_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Add Hotel
+        </a>
+    {% endif %}
+</div>
+
+<div class="card card-quiet">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Chain</th>
+                    <th>Email</th>
+                    <th>Contact</th>
+                    {% if is_chain_owner %}<th class="text-end">Actions</th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for hotel in hotels %}
+                <tr>
+                    <td class="fw-semibold">{{ hotel.name }}</td>
+                    <td><span class="badge text-bg-secondary">{{ hotel.code }}</span></td>
+                    <td>{{ hotel.chain.name }}</td>
+                    <td>{{ hotel.email|default:"—" }}</td>
+                    <td>{{ hotel.contact_numbers|default:"—" }}</td>
+                    {% if is_chain_owner %}
+                    <td class="text-end">
+                        <a href="{% url 'hotels:hotel_update' hotel.pk %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'hotels:hotel_delete' hotel.pk %}" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                    {% endif %}
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        No hotels found.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

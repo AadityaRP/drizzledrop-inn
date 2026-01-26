@@ -1,0 +1,378 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <style>
+        /* Print/PDF specific styles */
+        @media print {
+            @page {
+                size: A4;
+                margin: 20mm 15mm 20mm 15mm;
+            }
+
+            .footer {
+                position: relative;
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 2px solid #ccc;
+            }
+
+            body {
+                padding-bottom: 0;
+            }
+        }
+
+        /* Screen view styles */
+        @media screen {
+            body {
+                max-width: 210mm; /* A4 width */
+                margin: 20px auto;
+                padding: 20mm 15mm;
+                background: white;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+
+            .footer {
+                position: relative;
+                margin-top: 40px;
+                padding-top: 20px;
+                border-top: 2px solid #ccc;
+            }
+        }
+    
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: #222;
+        }
+    
+        /* -------- HEADER -------- */
+        .header-table {
+            width: 100%;
+            border-bottom: 2px solid #cfcfcf;
+            margin-bottom: 12px;
+        }
+    
+        .header-table td {
+            vertical-align: middle;
+        }
+    
+        .hotel-info {
+            font-size: 12px;
+        }
+    
+        .invoice-info {
+            text-align: right;
+        }
+    
+        .logo {
+            text-align: center;
+        }
+    
+        .logo img {
+            height: 70px;
+        }
+    
+        /* -------- CONTENT -------- */
+        .section {
+            margin-top: 14px;
+        }
+    
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+    
+        table.items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+    
+        table.items th,
+        table.items td {
+            border: 1px solid #ccc;
+            padding: 6px;
+        }
+    
+        table.items th {
+            background: #f2f2f2;
+        }
+    
+        .right {
+            text-align: right;
+        }
+
+        /* -------- PAYMENT SECTION -------- */
+        .payment-section {
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .payment-policy {
+            background: #e8f4f8;
+            padding: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #4a8f2a;
+            font-size: 11px;
+        }
+
+        .payment-methods {
+            margin-top: 15px;
+            width: 55%;
+            float: left;
+        }
+
+        .payment-methods h3 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .bank-details {
+            background: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+        }
+
+        .bank-details table {
+            width: 100%;
+            font-size: 11px;
+        }
+
+        .bank-details td {
+            padding: 4px;
+        }
+
+        .bank-details td:first-child {
+            font-weight: bold;
+            width: 30%;
+        }
+
+        .payment-apps {
+            margin: 15px 0;
+            font-size: 13px;
+        }
+
+        .payment-apps div {
+            margin: 8px 0;
+        }
+
+        .payment-apps strong {
+            display: inline-block;
+            width: 150px;
+        }
+
+        .gpay-section {
+            float: right;
+            width: 40%;
+            max-width: 280px;
+            margin-left: 20px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .gpay-section img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .payment-note {
+            background: #1a237e;
+            color: white;
+            padding: 8px;
+            margin-top: 15px;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .cancellation-policy {
+            margin-top: 20px;
+            clear: both;
+        }
+
+        .cancellation-policy h3 {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .cancellation-policy p {
+            font-size: 11px;
+            margin: 5px 0;
+            line-height: 1.5;
+        }
+
+        .cancellation-policy .highlight {
+            color: #d32f2f;
+        }
+
+        .refund-info {
+            color: #666;
+            margin-top: 8px;
+        }
+    
+        /* -------- FOOTER -------- */
+        .footer {
+            font-size: 10px;
+            text-align: center;
+            background: white;
+        }
+    
+        .thank-you {
+            font-size: 14px;
+            font-weight: bold;
+            color: #4a8f2a;
+            margin: 6px 0;
+        }
+
+        .footer-highlight {
+            color: #d84315;
+            font-weight: bold;
+            margin: 4px 0;
+        }
+    </style>
+    
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<table class="header-table">
+    <tr>
+        <td width="35%" class="hotel-info">
+            <strong>{{ invoice.hotel.name }}</strong><br>
+            {{ invoice.hotel.address }}<br>
+            GSTIN: {{ invoice.hotel.gstin|default:"NA" }}
+        </td>
+
+        <td width="30%" class="logo">
+            <img src="{{ logo_url }}" alt="Hotel Logo">
+        </td>
+
+        <td width="35%" class="invoice-info">
+            <strong>INVOICE</strong><br>
+            Invoice No: {{ invoice.invoice_number }}<br>
+            Date: {{ invoice.issue_date }}
+        </td>
+    </tr>
+</table>
+
+<!-- ================= GUEST ================= -->
+<div class="section">
+    <div class="section-title">Guest Details</div>
+    {{ invoice.booking.guest_name }}<br>
+    {{ invoice.booking.guest_mobile }}
+</div>
+
+<!-- ================= BILL ================= -->
+<div class="section">
+    <table class="items">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th class="right">Amount (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    Room – {{ invoice.booking.room_category.name }}
+                    × {{ invoice.booking.rooms_count }}
+                </td>
+                <td class="right">{{ invoice.taxable_amount }}</td>
+            </tr>
+
+            <tr>
+                <td>GST ({{ invoice.gst_rate }}%)</td>
+                <td class="right">{{ invoice.gst_amount }}</td>
+            </tr>
+
+            <tr>
+                <td><strong>Total Amount</strong></td>
+                <td class="right"><strong>{{ invoice.total_amount }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ================= PAYMENT SECTION ================= -->
+<div class="payment-section">
+    <div class="payment-policy">
+        <strong>As per the booking policy, First Night Rent OR 30% of the total rent should be paid as prepayment (Advance Amount).</strong>
+    </div>
+
+    <!-- Google Pay QR Code Section (Floating Right) -->
+    <div class="gpay-section">
+        <img src="{{ gpay_qr_full_url }}" alt="Google Pay QR Code">
+    </div>
+
+    <div class="payment-methods">
+        <h3>PAYMENT METHODS:</h3>
+        
+        <div class="bank-details">
+            <strong>Bank Account details for Payment.</strong>
+            <table>
+                <tr>
+                    <td>Beneficiary Name</td>
+                    <td>DrizzleDrop Inn</td>
+                </tr>
+                <tr>
+                    <td>Account number</td>
+                    <td>50200013228242</td>
+                </tr>
+                <tr>
+                    <td>Account Type</td>
+                    <td>Current</td>
+                </tr>
+                <tr>
+                    <td>Address</td>
+                    <td>HDFC BANK LTD.<br>421/C1 ETTINES ROAD, OOTY-643001</td>
+                </tr>
+                <tr>
+                    <td>RTGS / NEFT / IFSC</td>
+                    <td>HDFC0001270</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="payment-apps">
+            <div><strong>GOOGLE PAY</strong> : 9962822355</div>
+            <div><strong>PAYTM</strong> : 9962822355</div>
+        </div>
+
+        <div class="payment-note">
+            <strong>Note:</strong> Once the Payment is done, please mention the transaction details through Watsup OR SMS the payment details to +91 9962822355.
+        </div>
+    </div>
+
+    <!-- Cancellation Policy -->
+    <div class="cancellation-policy">
+        <h3>Cancellation Policy:</h3>
+        <p>The guest can cancel free of charge until <strong>3 days before arrival</strong>.</p>
+        <p class="highlight">The guest will be charged the first night if they cancel within 3 days before arrival.</p>
+        <p class="refund-info">Refund will be processed within 3 - 6 days.</p>
+    </div>
+</div>
+
+<!-- ================= FOOTER ================= -->
+<div class="footer">
+    <div class="thank-you">Thank you for your business</div>
+
+    <div class="footer-highlight">PLEASE REACH OUT TO MANAGERS FOR ANY FURHTER ASSISTANCE AFTER BOOKING</div>
+
+    <strong>Manager: 9150486153 / Anser: 70103 96012</strong><br>
+
+    215 H, Dispensary Road, Fern Hill, Ooty, Tamil Nadu – 643004<br>
+
+    Ph: 0423-2440551 / 0423-2440552<br>
+
+    Email: stay@drizzledropinn.com &nbsp; | &nbsp; Website: www.drizzledropinn.com
+</div>
+
+</body>
+</html>

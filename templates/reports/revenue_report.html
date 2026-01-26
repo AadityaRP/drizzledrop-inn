@@ -1,0 +1,59 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Revenue Report{% endblock %}
+{% block page_title %}Revenue & GST Reports{% endblock %}
+
+{% block content %}
+<div class="card card-quiet p-4 mb-3">
+    <div class="row text-center">
+        <div class="col-md-4">
+            <div class="text-muted">Today Revenue</div>
+            <div class="fs-4 fw-bold">₹ {{ daily.total|default:"0" }}</div>
+            <div class="text-muted small">GST ₹ {{ daily.gst|default:"0" }}</div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-muted">This Month</div>
+            <div class="fs-4 fw-bold">₹ {{ monthly.total|default:"0" }}</div>
+            <div class="text-muted small">GST ₹ {{ monthly.gst|default:"0" }}</div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-muted">Invoices Count</div>
+            <div class="fs-4 fw-bold">{{ monthly.count|default:"0" }}</div>
+            <div class="text-muted small">Month to date</div>
+        </div>
+    </div>
+</div>
+
+<div class="card card-quiet p-3">
+    <h6 class="mb-3">Monthly Invoices</h6>
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Invoice</th>
+                    <th>Date</th>
+                    <th>Guest</th>
+                    <th>Total</th>
+                    <th>GST</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for invoice in monthly_invoices %}
+                <tr>
+                    <td>{{ invoice.invoice_number }}</td>
+                    <td>{{ invoice.issue_date }}</td>
+                    <td>{{ invoice.booking.guest_name }}</td>
+                    <td>₹ {{ invoice.total_amount }}</td>
+                    <td>₹ {{ invoice.gst_amount }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">
+                        No invoices this month yet.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

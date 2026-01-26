@@ -1,0 +1,91 @@
+from __future__ import annotations
+
+from datetime import date
+from typing import Any, Dict
+
+from django import forms
+
+from core.models import get_user_hotels
+from enquiries.models import Enquiry
+from hotels.models import RoomCategory
+
+
+class EnquiryForm(forms.ModelForm):
+    """
+    Enquiry create/update form with hotel-scoped dropdowns and validation.
+    """
+
+    class Meta:
+        model = Enquiry
+        fields = [
+            "hotel",
+            "check_in",
+            "check_out",
+            "guest_name",
+            "guest_mobile",
+            "adults",
+            "children",
+            "room_category",
+            "with_food",
+            "extra_bed",
+            "early_check_in_option",
+            "late_check_out_option",
+            "special_request",
+            "status",
+        ]
+        widgets = {
+            "check_in": forms.DateInput(attrs={"type": "date"}),
+            "check_out": forms.DateInput(attrs={"type": "date"}),
+            "special_request": forms.Textarea(attrs={"rows": 3}),
+        }
+
+    def __init__(self, user, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        hotels_qs = get_user_hotels(user)
+        self.fields["hotel"].queryset = hotels_qs
+        if not self.instance.pk and hotels_qs.count() == 1:
+            self.fields["hotel"].initial = hotels_qs.first()
+
+        hotel = self._determine_hotel_initial(hotels_qs)
+        if hotel:
+            self.fields["room_category"].queryset = RoomCategory.objects.filter(
+                hotel=hotel
+            )
+        else:
+            self.fields["room_category"].queryset = RoomCategory.objects.filter(
+                hotel__in=hotels_qs
+            )
+
+    def _determine_hotel_initial(self, hotels_qs):
+        if self.instance and self.instance.pk:
+            return self.instance.hotel
+        if "hotel" in self.data:
+            try:
+                hotel_id = int(self.data.get("hotel"))
+            except (TypeError, ValueError):
+                return None
+            return hotels_qs.filter(id=hotel_id).first()
+        return (
+            self.initial.get("hotel")
+            or (hotels_qs.first() if hotels_qs.count() == 1 else None)
+        )
+
+    def clean(self) -> Dict[str, Any]:
+        cleaned = super().clean()
+        check_in = cleaned.get("check_in")
+        check_out = cleaned.get("check_out")
+        hotel = cleaned.get("hotel")
+        category = cleaned.get("room_category")
+
+        if check_in and check_out and check_in >= check_out:
+            self.add_error("check_out", "Check-out must be after check-in.")
+
+        if check_in and check_in < date.today():
+            self.add_error("check_in", "Check-in cannot be in the past.")
+
+        if hotel and category and category.hotel_id != hotel.id:
+            self.add_error(
+                "room_category", "Selected room category does not belong to this hotel."
+            )
+
+        return cleaned

@@ -1,0 +1,95 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Bookings | Drizzle Drop Inn{% endblock %}
+{% block page_title %}Bookings{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h5 class="mb-1">Bookings</h5>
+        <p class="text-muted mb-0">Manage reservations, check-in/out, and invoices.</p>
+    </div>
+    <a href="{% url 'bookings:booking_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> New Booking
+    </a>
+</div>
+
+<div class="card card-quiet p-3">
+    <form method="get" class="row g-2 align-items-end mb-3">
+        {% if is_chain_owner %}
+            <div class="col-md-4">
+                <label class="form-label">Filter by Hotel</label>
+                <select class="form-select" name="hotel" onchange="this.form.submit()">
+                    <option value="">All hotels</option>
+                    {% for hotel in accessible_hotels %}
+                        <option value="{{ hotel.id }}" {% if request.GET.hotel|default:''|stringformat:'s' == hotel.id|stringformat:'s' %}selected{% endif %}>
+                            {{ hotel.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% else %}
+            <div class="col-md-4">
+                <label class="form-label">Current Hotel</label>
+                <input class="form-control" value="{{ current_hotel }}" disabled>
+            </div>
+        {% endif %}
+    </form>
+
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Guest</th>
+                    <th>Dates</th>
+                    <th>Rooms</th>
+                    <th>Status</th>
+                    <th>Hotel</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for booking in bookings %}
+                <tr>
+                    <td class="fw-semibold">
+                        {{ booking.guest_name }}<br>
+                        <small class="text-muted">{{ booking.guest_mobile }}</small>
+                    </td>
+                    <td>{{ booking.check_in }} → {{ booking.check_out }}</td>
+                    <td>{{ booking.room_category.name }} ({{ booking.rooms_count }})</td>
+                    <td>
+                        <span class="badge text-bg-light text-dark">{{ booking.get_status_display }}</span>
+                    </td>
+                    <td>{{ booking.hotel.name }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'bookings:booking_update' booking.pk %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        {% if booking.status == "PENDING" %}
+                            <a href="{% url 'bookings:booking_confirm' booking.pk %}" class="btn btn-sm btn-outline-success">
+                                Confirm
+                            </a>
+                        {% endif %}
+                        {% if booking.status == "CONFIRMED" %}
+                            <a href="{% url 'bookings:booking_checkin' booking.pk %}" class="btn btn-sm btn-outline-primary">
+                                Check-in
+                            </a>
+                        {% endif %}
+                        {% if booking.status == "CONFIRMED" or booking.status == "CHECKED_IN" %}
+                            <a href="{% url 'bookings:booking_checkout' booking.pk %}" class="btn btn-sm btn-outline-dark">
+                                Check-out
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        No bookings yet.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+<div class="brand d-flex align-items-center justify-content-between">
+    <span>Drizzle Drop Inn</span>
+    <i class="bi bi-droplet-half"></i>
+    <i class="bi bi-building-fill-check"></i>
+</div>
+
+{% regroup sidebar_menu by section as sections %}
+{% for section in sections %}
+    <div class="section-title">{{ section.grouper|title }}</div>
+    <nav class="nav flex-column mb-2">
+        {% for item in section.list %}
+            <a class="nav-link {% if item.active %}active{% endif %}" href="{{ item.url }}">
+                <i class="bi {{ item.icon }}"></i>
+                <span>{{ item.label }}</span>
+            </a>
+        {% endfor %}
+    </nav>
+{% endfor %}

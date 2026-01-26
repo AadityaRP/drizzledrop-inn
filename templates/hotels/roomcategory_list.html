@@ -1,0 +1,92 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Room Categories | Drizzle Drop Inn{% endblock %}
+{% block page_title %}Room Categories{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h5 class="mb-1">Categories</h5>
+        <p class="text-muted mb-0">Stay types and pricing for each hotel.</p>
+    </div>
+    {% if is_chain_owner %}
+        <a href="{% url 'hotels:room_category_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Add Category
+        </a>
+    {% endif %}
+</div>
+
+<div class="card card-quiet p-3">
+    <form method="get" class="row g-2 align-items-end mb-3">
+        {% if is_chain_owner %}
+            <div class="col-md-4">
+                <label class="form-label">Filter by Hotel</label>
+                <select class="form-select" name="hotel" onchange="this.form.submit()">
+                    <option value="">All hotels</option>
+                    {% for hotel in accessible_hotels %}
+                        <option value="{{ hotel.id }}" {% if request.GET.hotel|default:''|stringformat:'s' == hotel.id|stringformat:'s' %}selected{% endif %}>
+                            {{ hotel.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% else %}
+            <div class="col-md-4">
+                <label class="form-label">Current Hotel</label>
+                <input class="form-control" value="{{ current_hotel }}" disabled>
+            </div>
+        {% endif %}
+    </form>
+
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Hotel</th>
+                    <th>With Food</th>
+                    <th>Base Rate</th>
+                    <th>Extra Bed</th>
+                    <th>Tax %</th>
+                    <th>Occupancy</th>
+                    {% if is_chain_owner %}<th class="text-end">Actions</th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for category in categories %}
+                <tr>
+                    <td class="fw-semibold">{{ category.name }}</td>
+                    <td>{{ category.hotel.name }}</td>
+                    <td>
+                        {% if category.with_food %}
+                            <span class="badge text-bg-success">Yes</span>
+                        {% else %}
+                            <span class="badge text-bg-light text-dark">No</span>
+                        {% endif %}
+                    </td>
+                    <td>₹{{ category.base_rate }}</td>
+                    <td>₹{{ category.extra_bed_rate }}</td>
+                    <td>{{ category.tax_rate }}%</td>
+                    <td>{{ category.max_adults }}A / {{ category.max_children }}C</td>
+                    {% if is_chain_owner %}
+                    <td class="text-end">
+                        <a href="{% url 'hotels:room_category_update' category.pk %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'hotels:room_category_delete' category.pk %}" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                    {% endif %}
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">
+                        No room categories yet.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

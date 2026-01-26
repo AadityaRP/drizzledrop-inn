@@ -1,0 +1,360 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Enquiry | Drizzle Drop Inn{% endblock %}
+{% block page_title %}Enquiry{% endblock %}
+
+{% block content %}
+<div class="enquiry-form-container">
+    <div class="card card-quiet border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom py-3 px-4">
+            <h5 class="mb-0 fw-semibold">{{ form.instance.pk|yesno:"Update Enquiry,New Enquiry" }}</h5>
+            <p class="text-muted mb-0 mt-1 small">Complete the form below</p>
+        </div>
+        
+        <div class="card-body p-4">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                
+                <!-- Property & Dates Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <i class="bi bi-building me-2"></i>Property & Stay Details
+                    </div>
+                    <div class="section-body">
+                        <div class="row g-3">
+                            <div class="col-lg-6">
+                                <label class="form-label">Hotel <span class="text-danger">*</span></label>
+                                {{ form.hotel }}
+                                {% if form.hotel.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.hotel.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-lg-6">
+                                <label class="form-label">Status <span class="text-danger">*</span></label>
+                                {{ form.status }}
+                                {% if form.status.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.status.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-lg-6">
+                                <label class="form-label">Check-in <span class="text-danger">*</span></label>
+                                {{ form.check_in }}
+                                {% if form.check_in.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.check_in.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-lg-6">
+                                <label class="form-label">Check-out <span class="text-danger">*</span></label>
+                                {{ form.check_out }}
+                                {% if form.check_out.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.check_out.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guest Information Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <i class="bi bi-person me-2"></i>Guest Information
+                    </div>
+                    <div class="section-body">
+                        <div class="row g-3">
+                            <div class="col-lg-6">
+                                <label class="form-label">Guest Name(s) <span class="text-danger">*</span></label>
+                                {{ form.guest_name }}
+                                {% if form.guest_name.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.guest_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-lg-6">
+                                <label class="form-label">Mobile Number</label>
+                                {{ form.guest_mobile }}
+                                {% if form.guest_mobile.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.guest_mobile.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Room & Occupancy Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <i class="bi bi-door-open me-2"></i>Room & Occupancy
+                    </div>
+                    <div class="section-body">
+                        <div class="row g-3">
+                            <div class="col-lg-4">
+                                <label class="form-label">Adults <span class="text-danger">*</span></label>
+                                {{ form.adults }}
+                                {% if form.adults.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.adults.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-lg-4">
+                                <label class="form-label">Children</label>
+                                {{ form.children }}
+                                {% if form.children.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.children.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-lg-4">
+                                <label class="form-label">Room Category <span class="text-danger">*</span></label>
+                                {{ form.room_category }}
+                                {% if form.room_category.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.room_category.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Preferences Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <i class="bi bi-sliders me-2"></i>Additional Preferences
+                    </div>
+                    <div class="section-body">
+                        <div class="row g-3">
+                            <div class="col-lg-6">
+                                <label class="form-label">Early Check-in</label>
+                                {{ form.early_check_in_option }}
+                                <small class="text-muted d-block mt-1">Default: After 11:00 AM</small>
+                                {% if form.early_check_in_option.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.early_check_in_option.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-lg-6">
+                                <label class="form-label">Late Check-out</label>
+                                {{ form.late_check_out_option }}
+                                <small class="text-muted d-block mt-1">Default: Before 11:00 AM</small>
+                                {% if form.late_check_out_option.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.late_check_out_option.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-check-box">
+                                    <div class="form-check">
+                                        {{ form.with_food }}
+                                        <label class="form-check-label" for="{{ form.with_food.id_for_label }}">
+                                            Include Food Service
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-check-box">
+                                    <div class="form-check">
+                                        {{ form.extra_bed }}
+                                        <label class="form-check-label" for="{{ form.extra_bed.id_for_label }}">
+                                            Extra Bed Required
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Special Requests Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <i class="bi bi-chat-left-text me-2"></i>Special Requests
+                    </div>
+                    <div class="section-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Special Request</label>
+                                {{ form.special_request }}
+                                {% if form.special_request.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.special_request.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions mt-4 pt-3 border-top d-flex justify-content-end gap-2">
+                    <a href="{% url 'enquiries:enquiry_list' %}" class="btn btn-light px-4">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-check-circle me-1"></i>Save Enquiry
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .enquiry-form-container {
+        max-width: 1200px;
+    }
+
+    /* Card Header */
+    .card-header h5 {
+        color: #111827;
+        font-size: 1.25rem;
+    }
+    
+    .card-header p {
+        font-size: 0.875rem;
+    }
+
+    /* Form Section */
+    .form-section {
+        margin-bottom: 1.5rem;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
+
+    .section-header {
+        background: linear-gradient(to right, #f8fafc, #f1f5f9);
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        color: #1e293b;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+    }
+
+    .section-header i {
+        color: #3b82f6;
+    }
+
+    .section-body {
+        padding: 1.25rem 1rem;
+    }
+    
+    /* Form Labels */
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #374151;
+        font-size: 0.875rem;
+        display: block;
+    }
+    
+    /* Form Controls - Light Curve Style */
+    .form-control,
+    .form-select {
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        padding: 0.65rem 1rem;
+        font-size: 0.9375rem;
+        transition: all 0.2s ease;
+        background-color: #f9fafb;
+    }
+    
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #3b82f6;
+        outline: 0;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+        background-color: #ffffff;
+    }
+    
+    .form-control::placeholder {
+        color: #9ca3af;
+    }
+    
+    textarea.form-control {
+        min-height: 80px;
+        resize: vertical;
+    }
+    
+    /* Checkbox Styling */
+    .form-check-box {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        transition: all 0.2s ease;
+    }
+    
+    .form-check-box:hover {
+        border-color: #cbd5e1;
+        background: #f3f4f6;
+    }
+    
+    .form-check {
+        padding-left: 1.75rem;
+        margin-bottom: 0;
+    }
+    
+    .form-check-input {
+        width: 1.15rem;
+        height: 1.15rem;
+        margin-top: 0.125rem;
+        cursor: pointer;
+        border: 2px solid #cbd5e1;
+    }
+    
+    .form-check-input:checked {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+    }
+    
+    .form-check-label {
+        cursor: pointer;
+        font-weight: 500;
+        color: #1f2937;
+        font-size: 0.9375rem;
+    }
+    
+    /* Small Text */
+    small.text-muted {
+        font-size: 0.8125rem;
+        font-style: italic;
+    }
+    
+    /* Buttons */
+    .btn {
+        font-weight: 500;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+        font-size: 0.9375rem;
+    }
+    
+    .btn-light {
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
+        color: #374151;
+    }
+    
+    .btn-light:hover {
+        background-color: #f3f4f6;
+        border-color: #d1d5db;
+        color: #1f2937;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        border: none;
+        box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        box-shadow: 0 3px 10px rgba(59, 130, 246, 0.35);
+        transform: translateY(-1px);
+    }
+    
+    /* Validation Feedback */
+    .invalid-feedback {
+        font-size: 0.8125rem;
+        margin-top: 0.25rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 991px) {
+        .section-body {
+            padding: 1rem;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Room Category | Drizzle Drop Inn{% endblock %}
+{% block page_title %}Room Category{% endblock %}
+
+{% block content %}
+<div class="card card-quiet p-4">
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="row g-3">
+            {% for field in form %}
+                <div class="col-md-6">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                    {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{% url 'hotels:room_category_list' %}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
